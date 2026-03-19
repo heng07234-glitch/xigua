@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "export_time": "2026-03-19T12:00:00",
+    "source": "sample_data",
+    "document_count": 5
+  },
+  "data": [
+    {
+      "level": "69",
+      "type": "男天青",
+      "school": "大唐官府",
+      "base_price": 180000,
+      "limit_item": "滑板",
+      "extra_price": 500,
+      "total_price": 180500,
+      "notes": "满底子满机缘"
+    },
+    {
+      "level": "69",
+      "type": "女天青",
+      "school": "女儿村",
+      "base_price": 80000,
+      "limit_item": null,
+      "extra_price": null,
+      "total_price": 80000,
+      "notes": "无限量"
+    },
+    {
+      "level": "109",
+      "type": "男狐青",
+      "school": "龙宫",
+      "base_price": 63000,
+      "limit_item": "天使猪",
+      "extra_price": 10000,
+      "total_price": 73000,
+      "notes": "带天使猪"
+    },
+    {
+      "level": "129",
+      "type": "满底子/满机缘",
+      "school": "化生寺",
+      "base_price": 250000,
+      "limit_item": "浪淘",
+      "extra_price": 1000,
+      "total_price": 251000,
+      "notes": "辅助角色"
+    },
+    {
+      "level": "175",
+      "type": "男单青",
+      "school": "狮驼岭",
+      "base_price": 42000,
+      "limit_item": "九尾冰狐",
+      "extra_price": 6000,
+      "total_price": 48000,
+      "notes": "物理输出"
+    }
+  ]
+}

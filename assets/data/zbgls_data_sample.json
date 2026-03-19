@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "export_time": "2026-03-19T23:28:28.776138",
+    "source": "sample_data",
+    "document_count": 5
+  },
+  "data": [
+    {
+      "equip_name": "璀璨戒指",
+      "price": 7900,
+      "equip_level": 60,
+      "position": 7,
+      "agg_added_attrs": [
+        "伤害 +7 速度 +6"
+      ],
+      "desc_sumup": "伤害 +13 精炼等级4",
+      "area_name": "上海1区",
+      "server_name": "珍宝阁",
+      "create_time": "2026-02-15T22:18:03"
+    },
+    {
+      "equip_name": "雪莲戒",
+      "price": 24688,
+      "equip_level": 80,
+      "position": 8,
+      "agg_added_attrs": [
+        "防御 +8 气血 +8 格挡值 +7"
+      ],
+      "desc_sumup": "防御 +16 精炼等级5",
+      "area_name": "上海1区",
+      "server_name": "珍宝阁",
+      "create_time": "2026-01-29T04:23:34"
+    },
+    {
+      "equip_name": "玲珑戒",
+      "price": 22800,
+      "equip_level": 100,
+      "position": 9,
+      "agg_added_attrs": [
+        "法术伤害 +10 法术暴击 +10 格挡值 +8"
+      ],
+      "desc_sumup": "法术伤害 +20",
+      "area_name": "上海1区",
+      "server_name": "珍宝阁",
+      "create_time": "2025-11-01T07:21:22"
+    },
+    {
+      "equip_name": "琉璃耳饰",
+      "price": 15000,
+      "equip_level": 60,
+      "position": 8,
+      "agg_added_attrs": [
+        "法术伤害 +6 法术暴击 +5"
+      ],
+      "desc_sumup": "法术伤害 +11 精炼等级3",
+      "area_name": "北京1区",
+      "server_name": "紫禁城",
+      "create_time": "2026-03-10T10:30:00"
+    },
+    {
+      "equip_name": "翡翠手镯",
+      "price": 32000,
+      "equip_level": 120,
+      "position": 9,
+      "agg_added_attrs": [
+        "气血 +15 防御 +10 格挡值 +9"
+      ],
+      "desc_sumup": "气血 +25 精炼等级6",
+      "area_name": "广州1区",
+      "server_name": "钓鱼岛",
+      "create_time": "2026-02-28T18:45:12"
+    }
+  ]
+}

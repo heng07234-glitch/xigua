@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>角色估价表 - 基于MongoDB数据</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f5f6fa; padding: 20px; }
+.container { max-width: 1400px; margin: auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+h1 { text-align: center; color: #333; margin-bottom: 10px; }
+.subtitle { text-align: center; color: #666; margin-bottom: 20px; }
+h2 { color: #444; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+.section { margin: 20px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid #f39c12; }
+.filter-bar { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+.filter-group { flex: 1; min-width: 140px; flex-basis: 0; }
+.filter-group label { display: block; margin-bottom: 4px; font-weight: bold; color: #555; font-size: 13px; }
+.filter-group select, .filter-group input, button { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; }
+button { background: #27ae60; color: #fff; border: none; cursor: pointer; font-weight: bold; }
+button:hover { background: #1e8a4a; }
+.data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+.data-table th, .data-table td { border: 1px solid #ddd; padding: 10px; text-align: center; vertical-align: top; }
+.data-table th { background: #f2f2f2; font-weight: bold; }
+/* 表格容器滚动 */
+#tableContainer { overflow-x: auto; }
+.data-table tr:hover { background: #fafafa; }
+.level-row td[rowspan] { background: #fafafa; font-weight: bold; }
+.price-cell { font-weight: bold; color: #c41e3a; }
+.loading, .error { padding: 16px; text-align: center; }
+.error { background: #ffe6e6; color: #cc0000; border-radius: 6px; }
+.hidden { display: none; }
+.stats { margin-top: 10px; color: #666; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="container">
+    <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+        <h1 style="margin: 0 0 15px 0;">角色估价表</h1>
+        <a href="../index.html" style="background: #3498db; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;">返回首页</a>
+    </div>
+    <p class="subtitle">基于Excel估价表角色工作表规则数据 | 数据更新时间: <span id="updateDate">2026-03-19</span> | 共 <span id="totalCount">0</span> 条记录</p>
+
+    <div class="section">
+        <h2>数据筛选</h2>
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label for="filterLevel">角色等级</label>
+                <select id="filterLevel" onchange="filterTable()">
+                    <option value="">全部等级</option>
+                    <option value="69">69级</option>
+                    <option value="89">89级</option>
+                    <option value="109">109级</option>
+                    <option value="129">129级</option>
+                    <option value="159">159级</option>
+                    <option value="175">175级</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterType">角色类型</label>
+                <select id="filterType" onchange="filterTable()">
+                    <option value="">全部类型</option>
+                    <!-- 动态填充 -->
+                </select>
+            </div>
+            <div class="filter-group" style="display: none;">
+                <label for="filterSchool">门派</label>
+                <select id="filterSchool" onchange="filterTable()">
+                    <option value="">全部门派</option>
+                    <!-- 动态填充，当前数据中无门派信息 -->
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterLimitItem">限量物品</label>
+                <select id="filterLimitItem" onchange="filterTable()">
+                    <option value="">全部限量</option>
+                    <option value="有">有限量</option>
+                    <option value="无">无限量</option>
+                </select>
+            </div>
+            <div class="filter-group" style="flex-grow: 1.5;">
+                <label for="filterKeyword">关键词搜索</label>
+                <input type="text" id="filterKeyword" placeholder="输入角色类型、限量等关键词" onkeyup="filterTable()">
+            </div>
+            <div class="filter-group" style="flex: 0 0 100px;">
+                <label>&nbsp;</label>
+                <button onclick="resetFilters()">重置筛选</button>
+            </div>
+        </div>
+        <div class="stats">
+            提示: 价格单位为元 | 数据来源: Excel估价表角色工作表 | 基础价格单位: 万（如18表示18万=180,000元）
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>角色数据表</h2>
+        <div id="tableContainer"><div class="loading">加载数据中...</div></div>
+        <div id="noDataMessage" class="hidden error">没有匹配的数据，请调整筛选条件。</div>
+    </div>
+</div>
+
+<script>
+// 全局数据
+let characterData = [];
+let processedData = [];
+
+// 数据加载函数（异步）
+async function loadCharacterData() {
+    console.log('loadCharacterData called');
+    try {
+        // 从JSON文件加载数据（与页面同目录）
+        const response = await fetch('character_data.json');
+
+        if (!response.ok) {
+            throw new Error(`HTTP错误 ${response.status}: ${response.statusText}`);
+        }
+
+        const jsonData = await response.json();
+
+        // 检查数据格式
+        if (!jsonData || !jsonData.data) {
+            console.warn('JSON数据格式不符合预期，尝试直接使用数组格式');
+            // 可能是直接数组格式
+            if (Array.isArray(jsonData)) {
+                console.log('✓ 加载角色数据（直接数组格式），长度:', jsonData.length);
+                return jsonData;
+            } else {
+                throw new Error('JSON数据格式错误：缺少data字段且不是数组');
+            }
+        }
+
+        // 提取数据数组
+        const dataArray = jsonData.data;
+        console.log('✓ 加载角色数据，长度:', dataArray.length);
+        console.log('数据来源:', jsonData.metadata?.source || '未知');
+        console.log('导出时间:', jsonData.metadata?.export_time || '未知');
+
+        return dataArray;
+    } catch (err) {
+        console.error('加载数据时出错:', err);
+        const container = document.getElementById('tableContainer');
+        if (container) {
+            container.innerHTML = '<div class="error">加载数据时发生错误: ' + err.message +
+                '<br>请检查:<br>' +
+                '1. character_data.json文件是否存在<br>' +
+                '2. 文件路径是否正确<br>' +
+                '3. 尝试运行export_character.bat重新生成数据</div>';
+        }
+        return [];
+    }
+}
+
+// 页面加载完成后的初始化（异步）
+async function initializePage() {
+    const container = document.getElementById('tableContainer');
+    if (container) {
+        container.innerHTML = '<div class="loading">正在初始化页面...</div>';
+    }
+
+    try {
+        console.log('开始初始化页面...');
+        // 异步加载数据
+        characterData = await loadCharacterData();
+        processedData = [...characterData];
+        console.log('数据加载完成，长度:', processedData.length);
+
+        // 检查数据是否为空
+        if (processedData.length === 0) {
+            console.error('数据为空！检查数据源...');
+            const container = document.getElementById('tableContainer');
+            if (container) {
+                container.innerHTML = '<div class="error">数据加载失败！<br>' +
+                    '1. 请检查控制台错误信息<br>' +
+                    '2. 确保character_data.json文件存在<br>' +
+                    '3. 确保MongoDB数据已正确导出<br>' +
+                    '4. 尝试运行export_character.bat重新生成数据</div>';
+            }
+            document.getElementById('noDataMessage').classList.add('hidden');
+            return;
+        }
+
+        // 填充类型筛选器
+        const typeSelect = document.getElementById('filterType');
+        if (typeSelect) {
+            const types = [...new Set(processedData.map(item => item.type))].sort();
+            types.forEach(type => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                typeSelect.appendChild(option);
+            });
+        }
+
+        // 填充门派筛选器（当前数据中无门派信息，跳过）
+        // const schoolSelect = document.getElementById('filterSchool');
+        // if (schoolSelect) {
+        //     const schools = [...new Set(processedData.map(item => item.school))].sort();
+        //     schools.forEach(school => {
+        //         const option = document.createElement('option');
+        //         option.value = school;
+        //         option.textContent = school;
+        //         schoolSelect.appendChild(option);
+        //     });
+        // }
+
+        // 更新总记录数
+        const totalCountElement = document.getElementById('totalCount');
+        if (totalCountElement) {
+            totalCountElement.textContent = processedData.length;
+        }
+
+        // 更新日期
+        const updateDateElement = document.getElementById('updateDate');
+        if (updateDateElement) {
+            updateDateElement.textContent = new Date().toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+
+        // 渲染表格
+        renderDataTable(processedData);
+        console.log('页面初始化完成！');
+    } catch (err) {
+        console.error('初始化页面时出错:', err);
+        const container = document.getElementById('tableContainer');
+        if (container) {
+            container.innerHTML = '<div class="error">页面初始化失败: ' + err.message + ' (查看控制台详情)</div>';
+        }
+    }
+}
+
+function renderDataTable(data) {
+    console.log('renderDataTable called with data length:', data.length);
+    const container = document.getElementById('tableContainer');
+    if (!container) {
+        console.error('错误: 找不到tableContainer元素');
+        return;
+    }
+
+    if (!data.length) {
+        console.warn('No data to render');
+        container.innerHTML = '';
+        document.getElementById('noDataMessage').classList.remove('hidden');
+        return;
+    }
+
+    try {
+        let html = '<table class="data-table">';
+        html += '<thead><tr>';
+        html += '<th>角色等级</th>';
+        html += '<th>角色类型</th>';
+        html += '<th>基础价格(元)</th>';
+        html += '<th>限量物品</th>';
+        html += '<th>附加价格(元)</th>';
+        html += '<th>总价格(元)</th>';
+        html += '<th>数据来源</th>';
+        html += '</tr></thead><tbody>';
+
+        data.forEach(item => {
+            html += '<tr>';
+            html += `<td>${item.level || ''}</td>`;
+            html += `<td>${item.type || ''}</td>`;
+            html += `<td class="price-cell">${formatPrice(item.base_price)}</td>`;
+            html += `<td>${item.limit_item || '无'}</td>`;
+            html += `<td class="price-cell">${formatPrice(item.extra_price)}</td>`;
+            html += `<td class="price-cell">${formatPrice(item.total_price)}</td>`;
+            html += `<td>${item.import_source || 'Excel估价表'}</td>`;
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+        document.getElementById('noDataMessage').classList.add('hidden');
+    } catch (err) {
+        console.error('渲染表格时出错:', err);
+        container.innerHTML = '<div class="error">渲染表格时出错: ' + err.message + '<br>请检查控制台查看详情。</div>';
+        document.getElementById('noDataMessage').classList.add('hidden');
+    }
+}
+
+function formatPrice(price) {
+    if (price === null || price === undefined || price === '') return '';
+    // 如果是数字，添加千位分隔符
+    if (typeof price === 'number') {
+        return price.toLocaleString('zh-CN');
+    }
+    return price;
+}
+
+function filterTable() {
+    const levelFilter = document.getElementById('filterLevel').value;
+    const typeFilter = document.getElementById('filterType').value;
+    const schoolFilter = ''; // document.getElementById('filterSchool').value; // 当前数据无门派信息
+    const limitItemFilter = document.getElementById('filterLimitItem').value;
+    const keywordFilter = document.getElementById('filterKeyword').value.trim().toLowerCase();
+
+    const filtered = characterData.filter(item => {
+        if (levelFilter && item.level !== levelFilter) return false;
+        if (typeFilter && item.type !== typeFilter) return false;
+        // if (schoolFilter && item.school !== schoolFilter) return false; // 跳过门派筛选
+        if (limitItemFilter === '有' && !item.limit_item) return false;
+        if (limitItemFilter === '无' && item.limit_item) return false;
+        const searchText = `${item.type} ${item.limit_item || ''}`.toLowerCase(); // 移除school
+        if (keywordFilter && !searchText.includes(keywordFilter)) return false;
+        return true;
+    });
+
+    processedData = filtered;
+    const totalCountElement = document.getElementById('totalCount');
+    if (totalCountElement) {
+        totalCountElement.textContent = filtered.length;
+    }
+    renderDataTable(filtered);
+}
+
+function resetFilters() {
+    document.getElementById('filterLevel').value = '';
+    document.getElementById('filterType').value = '';
+    // document.getElementById('filterSchool').value = ''; // 隐藏的筛选器
+    document.getElementById('filterLimitItem').value = '';
+    document.getElementById('filterKeyword').value = '';
+    processedData = [...characterData];
+    const totalCountElement = document.getElementById('totalCount');
+    if (totalCountElement) {
+        totalCountElement.textContent = characterData.length;
+    }
+    renderDataTable(processedData);
+}
+
+// 页面加载完成后执行
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOMContentLoaded事件触发');
+    // 调用异步初始化函数
+    initializePage().catch(err => {
+        console.error('初始化页面失败:', err);
+        const container = document.getElementById('tableContainer');
+        if (container) {
+            container.innerHTML = '<div class="error">初始化页面时发生严重错误: ' + err.message + '</div>';
+        }
+    });
+});
+
+// 备用：如果DOMContentLoaded没有触发，设置超时
+setTimeout(function() {
+    const container = document.getElementById('tableContainer');
+    if (container && container.innerHTML.includes('加载数据中')) {
+        console.warn('页面加载超时，强制初始化');
+        initializePage().catch(err => {
+            console.error('超时后初始化页面失败:', err);
+            const container = document.getElementById('tableContainer');
+            if (container) {
+                container.innerHTML = '<div class="error">初始化页面时发生严重错误: ' + err.message + '</div>';
+            }
+        });
+    }
+}, 3000);
+</script>
+</body>
+</html>

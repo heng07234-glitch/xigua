@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>梦幻西游估价系统 - 首页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .logo-icon {
+            color: #3498db;
+            margin-right: 10px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-icon {
+            height: 80px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .card-description {
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .card-status {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #e8f4fc;
+            color: #3498db;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .card-status.available {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .card-status.coming {
+            background: #fef9e7;
+            color: #f39c12;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px;
+            color: #7f8c8d;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .update-info {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            color: #95a5a6;
+        }
+
+        @media (max-width: 768px) {
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .card-icon {
+                height: 70px;
+                font-size: 2rem;
+            }
+        }
+
+        /* 不同类别的颜色 */
+        .ling-shi .card-icon { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
+        .bao-bao .card-icon { background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); }
+        .wu-ji-bie .card-icon { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .ren-wu-bu-mo .card-icon { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .te-ji-zhuang-bei .card-icon { background: linear-gradient(135deg, #f39c12 0%, #d35400 100%); }
+        .fen-nu-yao-dai .card-icon { background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); }
+        .yi-fu .card-icon { background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">⚔️</span>梦幻西游估价系统
+            </div>
+            <p class="subtitle">基于Excel价格表的智能估价工具，快速估算各类游戏物品价值</p>
+        </header>
+
+        <main>
+            <div class="categories-grid">
+                <!-- 灵饰 -->
+                <a href="ling-shi/estimate.html" class="category-card ling-shi">
+                    <div class="card-icon">💎</div>
+                    <div class="card-content">
+                        <h3 class="card-title">灵饰估价</h3>
+                        <p class="card-description">戒指、耳饰等灵饰装备的价格评估，包含物理系、法系、辅助系等不同职业的灵饰价格。</p>
+                        <span class="card-status available">✓ 已可用</span>
+                    </div>
+                </a>
+
+                <!-- 宝宝 -->
+                <a href="bao-bao/estimate.html" class="category-card bao-bao">
+                    <div class="card-icon">🐉</div>
+                    <div class="card-content">
+                        <h3 class="card-title">宝宝估价</h3>
+                        <p class="card-description">召唤兽、宠物宝宝的价格评估，包括不同等级、资质、技能的宝宝价值估算。</p>
+                        <span class="card-status available">✓ 已可用</span>
+                    </div>
+                </a>
+
+                <!-- 无级别 -->
+                <a href="#" class="category-card wu-ji-bie" onclick="showComingSoon('无级别装备估价')">
+                    <div class="card-icon">⭐</div>
+                    <div class="card-content">
+                        <h3 class="card-title">无级别装备</h3>
+                        <p class="card-description">无级别限制装备的价格评估，包含武器、防具等无级别装备的市场价值。</p>
+                        <span class="card-status coming">🔜 开发中</span>
+                    </div>
+                </a>
+
+                <!-- 任务不磨 -->
+                <a href="#" class="category-card ren-wu-bu-mo" onclick="showComingSoon('任务不磨装备估价')">
+                    <div class="card-icon">🛡️</div>
+                    <div class="card-content">
+                        <h3 class="card-title">任务不磨装备</h3>
+                        <p class="card-description">任务用不磨装备的价格评估，适合日常任务使用的耐久不磨损装备。</p>
+                        <span class="card-status coming">🔜 开发中</span>
+                    </div>
+                </a>
+
+                <!-- 特技装备 -->
+                <a href="#" class="category-card te-ji-zhuang-bei" onclick="showComingSoon('特技装备估价')">
+                    <div class="card-icon">✨</div>
+                    <div class="card-content">
+                        <h3 class="card-title">特技装备</h3>
+                        <p class="card-description">带有特技的装备价格评估，包含各种实用特技的装备价值估算。</p>
+                        <span class="card-status coming">🔜 开发中</span>
+                    </div>
+                </a>
+
+                <!-- 愤怒腰带 -->
+                <a href="#" class="category-card fen-nu-yao-dai" onclick="showComingSoon('愤怒腰带估价')">
+                    <div class="card-icon">🔥</div>
+                    <div class="card-content">
+                        <h3 class="card-title">愤怒腰带</h3>
+                        <p class="card-description">愤怒特效腰带的价格评估，包含不同等级、属性的愤怒腰带市场价。</p>
+                        <span class="card-status coming">🔜 开发中</span>
+                    </div>
+                </a>
+
+                <!-- 衣服 -->
+                <a href="#" class="category-card yi-fu" onclick="showComingSoon('衣服估价')">
+                    <div class="card-icon">👕</div>
+                    <div class="card-content">
+                        <h3 class="card-title">衣服估价</h3>
+                        <p class="card-description">各类衣服装备的价格评估，包括不同等级、属性、特效的衣服价值。</p>
+                        <span class="card-status coming">🔜 开发中</span>
+                    </div>
+                </a>
+            </div>
+        </main>
+
+        <footer>
+            <p>💡 提示：此估价系统基于Excel价格表数据，价格仅供参考。实际交易价格可能受市场供需影响。</p>
+            <p class="update-info">数据来源：估价表.xlsx | 最后更新：<span id="updateDate">2026-03-18</span></p>
+        </footer>
+    </div>
+
+    <script>
+        // 设置更新日期
+        document.getElementById('updateDate').textContent = new Date().toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+
+        // 显示开发中的提示
+        function showComingSoon(featureName) {
+            alert(`🚧 ${featureName} 功能正在开发中，敬请期待！\n\n目前仅"灵饰估价"功能可用。`);
+            return false;
+        }
+
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.category-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>估价测试页面</title>
+<style>
+body { font-family: Arial; padding: 20px; }
+.container { max-width: 800px; margin: auto; }
+.section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+</style>
+</head>
+<body>
+<div class="container">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <h1 style="margin: 0;">估价规则测试页面</h1>
+    <a href="../index.html" style="background: #3498db; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;">返回首页</a>
+</div>
+<p>以下是从Excel生成的估价规则：</p>
+
+<div class="section">
+<h2>角色规则 (69级)</h2>
+<div id="character-rules"></div>
+</div>
+
+<div class="section">
+<h2>宝宝规则</h2>
+<div id="baby-rules"></div>
+</div>
+
+<div class="section">
+<h2>无级别装备规则</h2>
+<div id="wu-ji-bie-rules"></div>
+</div>
+
+<script src="../assets/data/rules.js"></script>
+<script>
+// 显示角色规则
+const charRules = PRICE_RULES.character["69"]?.characters || [];
+const charHtml = charRules.map(c =>
+    `<div><strong>${c.type}</strong>: 基础价 ${c.base_price || 0}元, 限量: ${c.limit_item || '无'}, 附加: ${c.extra_price || 0}元</div>`
+).join('');
+document.getElementById('character-rules').innerHTML = charHtml || '<p>无角色规则</p>';
+
+// 显示宝宝规则
+const babyHtml = Object.entries(PRICE_RULES.baby).map(([type, prices]) =>
+    `<div><strong>${type}</strong>: ${JSON.stringify(prices)}</div>`
+).join('');
+document.getElementById('baby-rules').innerHTML = babyHtml || '<p>无宝宝规则</p>';
+
+// 显示无级别规则
+const wjbHtml = Object.entries(PRICE_RULES.wu_ji_bie).map(([part, prices]) =>
+    `<div><strong>${part}</strong>: ${JSON.stringify(prices)}</div>`
+).join('');
+document.getElementById('wu-ji-bie-rules').innerHTML = wjbHtml || '<p>无无级别规则</p>';
+
+console.log('估价规则已加载:', PRICE_RULES);
+</script>
+</div>
+</body>
+</html>

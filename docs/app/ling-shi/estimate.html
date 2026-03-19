@@ -116,8 +116,8 @@ button:hover { background: #1e8a4a; }
     </div>
 </div>
 
-<script src="../../../assets/data/icon_mapping.js"></script>
-<script src="../../../assets/data/lingshi_data.js"></script>
+<script src="../../assets/data/icon_mapping.js"></script>
+<script src="../../assets/data/lingshi_data.js"></script>
 <script>
 // 使用导入的数据
 let processedData = [];
@@ -504,7 +504,7 @@ function getTypeImage(level, type) {
         console.warn('getTypeImage缺少参数:', {level, type});
         return '';
     }
-    const imagePath = `../../../assets/images/lingshi-logos/${level}${type}.png`;
+    const imagePath = `../../assets/images/lingshi-logos/${level}${type}.png`;
     console.log('生成图片路径:', imagePath, '等级:', level, '类型:', type);
     return `<img src="${imagePath}" alt="${type}" class="type-image" title="${type}" onerror="console.error('图片加载失败:', this.src)">`;
 }
